@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.ResourceCategoryMapper">
+
+    <resultMap type="ResourceCategory" id="ResourceCategoryResult">
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="order" column="order"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectResourceCategoryVo">
+        select `category_id`,
+               `category_name`,
+               `order`,
+               `status`,
+               `create_time`,
+               `update_time`,
+               `create_by`,
+               `update_by`,
+               `shop_id`,
+               `remark`
+        from `tb_resource_category`
+    </sql>
+
+    <select id="selectResourceCategoryList" parameterType="ResourceCategory" resultMap="ResourceCategoryResult">
+        <include refid="selectResourceCategoryVo"/>
+        <where>
+            <if test="categoryName != null  and categoryName != ''">
+                and `category_name` like concat('%', #{categoryName}, '%')
+            </if>
+            <if test="status != null ">
+                and `status` = #{status}
+            </if>
+            <if test="shopId != null ">
+                and `shop_id` = #{shopId}
+            </if>
+        </where>
+        order by `order` asc
+    </select>
+
+    <select id="selectResourceCategoryByCategoryId" parameterType="Long" resultMap="ResourceCategoryResult">
+        <include refid="selectResourceCategoryVo"/>
+        where `category_id` = #{categoryId}
+    </select>
+
+    <insert id="insertResourceCategory" parameterType="ResourceCategory" useGeneratedKeys="true"
+            keyProperty="categoryId">
+        insert into `tb_resource_category`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null and categoryName != ''">`category_name`,</if>
+            <if test="order != null">`order`,</if>
+            <if test="status != null">`status`,</if>
+            <if test="createTime != null">`create_time`,</if>
+            <if test="updateTime != null">`update_time`,</if>
+            <if test="createBy != null">`create_by`,</if>
+            <if test="updateBy != null">`update_by`,</if>
+            <if test="shopId != null">`shop_id`,</if>
+            <if test="remark != null">`remark`,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryName != null and categoryName != ''">#{categoryName},</if>
+            <if test="order != null">#{order},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="shopId != null">#{shopId},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateResourceCategory" parameterType="ResourceCategory">
+        update `tb_resource_category`
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryName != null and categoryName != ''">`category_name` = #{categoryName},</if>
+            <if test="order != null">`order` = #{order},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+            <if test="createBy != null">`create_by` = #{createBy},</if>
+            <if test="updateBy != null">`update_by` = #{updateBy},</if>
+            <if test="shopId != null">`shop_id` = #{shopId},</if>
+            <if test="remark != null">`remark` = #{remark},</if>
+        </trim>
+        where `category_id` = #{categoryId}
+    </update>
+
+    <delete id="deleteResourceCategoryByCategoryId" parameterType="Long">
+        delete
+        from `tb_resource_category`
+        where `category_id` = #{categoryId}
+    </delete>
+
+    <delete id="deleteResourceCategoryByCategoryIds" parameterType="String">
+        delete from `tb_resource_category` where `category_id` in
+        <foreach item="categoryId" collection="array" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </delete>
+
+</mapper>

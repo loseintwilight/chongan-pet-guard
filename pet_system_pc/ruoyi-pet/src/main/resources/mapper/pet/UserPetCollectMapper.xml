@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.UserPetCollectMapper">
+
+    <resultMap type="UserPetCollect" id="UserPetCollectResult">
+        <result property="upcId" column="upc_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="petId" column="pet_id"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="selectUserPetCollectVo">
+        select upc_id, user_id, pet_id, create_time
+        from tb_user_pet_collect
+    </sql>
+
+    <select id="selectUserPetCollectList" parameterType="UserPetCollect" resultMap="UserPetCollectResult">
+        <include refid="selectUserPetCollectVo"/>
+        <where>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="petId != null ">and pet_id = #{petId}</if>
+        </where>
+    </select>
+
+    <select id="selectUserPetCollectByUpcId" parameterType="Long" resultMap="UserPetCollectResult">
+        <include refid="selectUserPetCollectVo"/>
+        where upc_id = #{upcId}
+    </select>
+    <select id="selectOneByUserIdWithPetId" resultMap="UserPetCollectResult">
+        <include refid="selectUserPetCollectVo"/>
+        WHERE user_id = #{userId}
+        and pet_id = #{petId}
+    </select>
+    <select id="selectUserPetCollectListByUserId" resultMap="UserPetCollectResult">
+        <include refid="selectUserPetCollectVo"/>
+        WHERE user_id = #{userId}
+    </select>
+
+    <insert id="insertUserPetCollect" parameterType="UserPetCollect" useGeneratedKeys="true" keyProperty="upcId">
+        insert into tb_user_pet_collect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="petId != null">pet_id,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="petId != null">#{petId},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateUserPetCollect" parameterType="UserPetCollect">
+        update tb_user_pet_collect
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="petId != null">pet_id = #{petId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where upc_id = #{upcId}
+    </update>
+
+    <delete id="deleteUserPetCollectByUpcId" parameterType="Long">
+        delete
+        from tb_user_pet_collect
+        where upc_id = #{upcId}
+    </delete>
+
+    <delete id="deleteUserPetCollectByUpcIds" parameterType="String">
+        delete from tb_user_pet_collect where upc_id in
+        <foreach item="upcId" collection="array" open="(" separator="," close=")">
+            #{upcId}
+        </foreach>
+    </delete>
+    <delete id="deleteUserPetCollectByUserIdAndPetId">
+        delete
+        from tb_user_pet_collect
+        where user_id = #{userId}
+          and pet_id = #{petId};
+    </delete>
+</mapper>

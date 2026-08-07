@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.PetResourceMapper">
+
+    <resultMap type="PetResource" id="PetResourceResult">
+        <result property="resourceId" column="resource_id"/>
+        <result property="resourceName" column="resource_name"/>
+        <result property="images" column="images"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="status" column="status"/>
+        <result property="specification" column="specification"/>
+        <result property="stock" column="stock"/>
+        <result property="sales" column="sales"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remark" column="remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="price" column="price"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="description" column="description"/>
+        <result property="originalPrice" column="original_price"/>
+        <result property="unit" column="unit"/>
+        <result property="weight" column="weight"/>
+        <result property="sort" column="sort"/>
+        <result property="isHot" column="is_hot"/>
+        <result property="isNew" column="is_new"/>
+        <result property="isRecommend" column="is_recommend"/>
+        <result property="shopName" column="shop_name"/>
+    </resultMap>
+
+    <sql id="selectPetResourceVo">
+        select r.resource_id,
+               r.resource_name,
+               r.images,
+               r.category_id,
+               r.category_name,
+               r.status,
+               r.specification,
+               r.stock,
+               r.sales,
+               r.create_time,
+               r.create_by,
+               r.update_time,
+               r.update_by,
+               r.remark,
+               r.is_deleted,
+               r.price,
+               r.shop_id,
+               r.description,
+               r.original_price,
+               r.unit,
+               r.weight,
+               r.sort,
+               r.is_hot,
+               r.is_new,
+               r.is_recommend,
+               s.shop_name
+        from tb_pet_resource r
+        left join tb_shop s on r.shop_id = s.shop_id
+    </sql>
+
+    <select id="selectPetResourceList" parameterType="PetResource" resultMap="PetResourceResult">
+        <include refid="selectPetResourceVo"/>
+        <where>
+            r.is_deleted = 0
+            <if test="resourceName != null  and resourceName != ''">and r.resource_name like concat('%', #{resourceName}, '%')</if>
+            <if test="categoryId != null ">and r.category_id = #{categoryId}</if>
+            <if test="categoryName != null  and categoryName != ''">and r.category_name = #{categoryName}</if>
+            <if test="status != null ">and r.status = #{status}</if>
+            <if test="shopId != null ">and r.shop_id = #{shopId}</if>
+            <if test="isHot != null ">and r.is_hot = #{isHot}</if>
+            <if test="isNew != null ">and r.is_new = #{isNew}</if>
+            <if test="isRecommend != null ">and r.is_recommend = #{isRecommend}</if>
+        </where>
+        order by r.sort asc, r.create_time desc
+    </select>
+
+    <select id="selectPetResourceByResourceId" parameterType="Long" resultMap="PetResourceResult">
+        <include refid="selectPetResourceVo"/>
+        where r.resource_id = #{resourceId}
+    </select>
+
+    <insert id="insertPetResource" parameterType="PetResource" useGeneratedKeys="true" keyProperty="resourceId">
+        insert into tb_pet_resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resourceName != null and resourceName != ''">resource_name,</if>
+            <if test="images != null and images != ''">images,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="categoryName != null and categoryName != ''">category_name,</if>
+            <if test="status != null">status,</if>
+            <if test="specification != null and specification != ''">specification,</if>
+            <if test="stock != null">stock,</if>
+            <if test="sales != null">sales,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="price != null">price,</if>
+            <if test="shopId != null">shop_id,</if>
+            <if test="description != null">description,</if>
+            <if test="originalPrice != null">original_price,</if>
+            <if test="unit != null">unit,</if>
+            <if test="weight != null">weight,</if>
+            <if test="sort != null">sort,</if>
+            <if test="isHot != null">is_hot,</if>
+            <if test="isNew != null">is_new,</if>
+            <if test="isRecommend != null">is_recommend,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resourceName != null and resourceName != ''">#{resourceName},</if>
+            <if test="images != null and images != ''">#{images},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="categoryName != null and categoryName != ''">#{categoryName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="specification != null and specification != ''">#{specification},</if>
+            <if test="stock != null">#{stock},</if>
+            <if test="sales != null">#{sales},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="price != null">#{price},</if>
+            <if test="shopId != null">#{shopId},</if>
+            <if test="description != null">#{description},</if>
+            <if test="originalPrice != null">#{originalPrice},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="isHot != null">#{isHot},</if>
+            <if test="isNew != null">#{isNew},</if>
+            <if test="isRecommend != null">#{isRecommend},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePetResource" parameterType="PetResource">
+        update tb_pet_resource
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="resourceName != null and resourceName != ''">resource_name = #{resourceName},</if>
+            <if test="images != null and images != ''">images = #{images},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="categoryName != null and categoryName != ''">category_name = #{categoryName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="specification != null and specification != ''">specification = #{specification},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="sales != null">sales = #{sales},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="shopId != null">shop_id = #{shopId},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="originalPrice != null">original_price = #{originalPrice},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="isHot != null">is_hot = #{isHot},</if>
+            <if test="isNew != null">is_new = #{isNew},</if>
+            <if test="isRecommend != null">is_recommend = #{isRecommend},</if>
+        </trim>
+        where resource_id = #{resourceId}
+    </update>
+    <update id="updateDeletePetResourceByResourceIds">
+        update tb_pet_resource set is_deleted = 1 where resource_id in
+        <foreach item="resourceId" collection="array" open="(" separator="," close=")">
+            #{resourceId}
+        </foreach>
+    </update>
+
+    <delete id="deletePetResourceByResourceId" parameterType="Long">
+        delete
+        from tb_pet_resource
+        where resource_id = #{resourceId}
+    </delete>
+
+    <delete id="deletePetResourceByResourceIds" parameterType="String">
+        delete from tb_pet_resource where resource_id in
+        <foreach item="resourceId" collection="array" open="(" separator="," close=")">
+            #{resourceId}
+        </foreach>
+    </delete>
+
+    <select id="selectPetResourceListByShopHot" resultMap="PetResourceResult">
+        <include refid="selectPetResourceVo"/>
+        where r.is_deleted = 0
+          and r.status = 0
+          and r.shop_id = #{shopId}
+        order by r.sales desc, r.create_time desc, r.resource_id desc
+        limit #{limit}
+    </select>
+</mapper>

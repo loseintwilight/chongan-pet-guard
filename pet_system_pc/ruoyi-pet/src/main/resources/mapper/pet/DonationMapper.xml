@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.DonationMapper">
+
+    <resultMap type="Donation" id="DonationResult">
+        <result property="donationId" column="donation_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="amount" column="amount"/>
+        <result property="transctionId" column="transction_id"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remark" column="remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="selectDonationVo">
+        select donation_id,
+               user_id,
+               user_name,
+               amount,
+               transction_id,
+               status,
+               create_time,
+               create_by,
+               update_time,
+               update_by,
+               remark,
+               is_deleted
+        from tb_donation
+    </sql>
+
+    <select id="selectDonationList" parameterType="Donation" resultMap="DonationResult">
+        <include refid="selectDonationVo"/>
+        <where>
+            is_deleted = 0
+            <if test="userName != null  and userName != ''">and user_name like concat('%', #{userName}, '%')</if>
+            <if test="transctionId != null  and transctionId != ''">and transction_id = #{transctionId}</if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+        order by donation_id desc
+    </select>
+
+    <select id="selectDonationByDonationId" parameterType="Long" resultMap="DonationResult">
+        <include refid="selectDonationVo"/>
+        where donation_id = #{donationId}
+    </select>
+
+    <insert id="insertDonation" parameterType="Donation" useGeneratedKeys="true" keyProperty="donationId">
+        insert into tb_donation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null and userName != ''">user_name,</if>
+            <if test="amount != null">amount,</if>
+            <if test="transctionId != null">transction_id,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null and userName != ''">#{userName},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="transctionId != null">#{transctionId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDonation" parameterType="Donation">
+        update tb_donation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="transctionId != null">transction_id = #{transctionId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where donation_id = #{donationId}
+    </update>
+    <update id="updateDeleteDonationByDonationIds">
+        update tb_donation
+        set is_deleted = 1 where donation_id in
+        <foreach item="donationId" collection="array" open="(" separator="," close=")">
+            #{donationId}
+        </foreach>
+    </update>
+
+    <delete id="deleteDonationByDonationId" parameterType="Long">
+        delete
+        from tb_donation
+        where donation_id = #{donationId}
+    </delete>
+
+    <delete id="deleteDonationByDonationIds" parameterType="String">
+        delete from tb_donation where donation_id in
+        <foreach item="donationId" collection="array" open="(" separator="," close=")">
+            #{donationId}
+        </foreach>
+    </delete>
+</mapper>

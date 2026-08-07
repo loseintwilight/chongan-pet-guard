@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.RescueMapper">
+    
+    <resultMap type="Rescue" id="RescueResult">
+        <result property="rescueId"    column="rescue_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="reporterName"    column="reporter_name"    />
+        <result property="reporterPhone"    column="reporter_phone"    />
+        <result property="petDesc"    column="pet_desc"    />
+        <result property="location"    column="location"    />
+        <result property="images"    column="images"    />
+        <result property="status"    column="status"    />
+        <result property="handleTime"    column="handle_time"    />
+        <result property="handleId"    column="handle_id"    />
+        <result property="handleRemark"    column="handle_remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectRescueVo">
+        select rescue_id, user_id, reporter_name, reporter_phone, pet_desc, location, images, status, handle_time, handle_id, handle_remark, create_time, create_by, update_time, update_by, is_deleted from tb_rescue
+    </sql>
+
+    <select id="selectRescueList" parameterType="Rescue" resultMap="RescueResult">
+        <include refid="selectRescueVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="reporterName != null  and reporterName != ''"> and reporter_name like concat('%', #{reporterName}, '%')</if>
+            <if test="reporterPhone != null  and reporterPhone != ''"> and reporter_phone = #{reporterPhone}</if>
+            <if test="location != null  and location != ''"> and location like concat('%', #{location}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectRescueByRescueId" parameterType="Long" resultMap="RescueResult">
+        <include refid="selectRescueVo"/>
+        where rescue_id = #{rescueId}
+    </select>
+
+    <insert id="insertRescue" parameterType="Rescue" useGeneratedKeys="true" keyProperty="rescueId">
+        insert into tb_rescue
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="reporterName != null">reporter_name,</if>
+            <if test="reporterPhone != null">reporter_phone,</if>
+            <if test="petDesc != null">pet_desc,</if>
+            <if test="location != null">location,</if>
+            <if test="images != null">images,</if>
+            <if test="status != null">status,</if>
+            <if test="handleTime != null">handle_time,</if>
+            <if test="handleId != null">handle_id,</if>
+            <if test="handleRemark != null">handle_remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="reporterName != null">#{reporterName},</if>
+            <if test="reporterPhone != null">#{reporterPhone},</if>
+            <if test="petDesc != null">#{petDesc},</if>
+            <if test="location != null">#{location},</if>
+            <if test="images != null">#{images},</if>
+            <if test="status != null">#{status},</if>
+            <if test="handleTime != null">#{handleTime},</if>
+            <if test="handleId != null">#{handleId},</if>
+            <if test="handleRemark != null">#{handleRemark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRescue" parameterType="Rescue">
+        update tb_rescue
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="reporterName != null">reporter_name = #{reporterName},</if>
+            <if test="reporterPhone != null">reporter_phone = #{reporterPhone},</if>
+            <if test="petDesc != null">pet_desc = #{petDesc},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="images != null">images = #{images},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="handleTime != null">handle_time = #{handleTime},</if>
+            <if test="handleId != null">handle_id = #{handleId},</if>
+            <if test="handleRemark != null">handle_remark = #{handleRemark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where rescue_id = #{rescueId}
+    </update>
+
+    <delete id="deleteRescueByRescueId" parameterType="Long">
+        delete from tb_rescue where rescue_id = #{rescueId}
+    </delete>
+
+    <delete id="deleteRescueByRescueIds" parameterType="String">
+        delete from tb_rescue where rescue_id in 
+        <foreach item="rescueId" collection="array" open="(" separator="," close=")">
+            #{rescueId}
+        </foreach>
+    </delete>
+</mapper>

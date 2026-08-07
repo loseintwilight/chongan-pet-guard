@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.TbActivityMapper">
+
+    <resultMap type="TbActivity" id="TbActivityResult">
+        <result property="activityId" column="activity_id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="images" column="images"/>
+        <result property="startSignTime" column="start_sign_time"/>
+        <result property="endSignTime" column="end_sign_time"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="createOrganize" column="create_organize"/>
+        <result property="activityCategory" column="activity_category"/>
+        <result property="address" column="address"/>
+        <result property="count" column="count"/>
+        <result property="personCount" column="person_count"/>
+        <result property="status" column="status"/>
+        <result property="isTop" column="is_top"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remark" column="remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="selectTbActivityVo">
+        select activity_id,
+               title,
+               content,
+               images,
+               start_sign_time,
+               end_sign_time,
+               start_time,
+               end_time,
+               create_organize,
+               activity_category,
+               address,
+               count,
+               person_count,
+               status,
+               is_top,
+               create_time,
+               create_by,
+               update_time,
+               update_by,
+               remark,
+               is_deleted
+        from tb_activity
+    </sql>
+
+    <select id="selectTbActivityList" parameterType="TbActivity" resultMap="TbActivityResult">
+        <include refid="selectTbActivityVo"/>
+        <where>
+            is_deleted = 0
+            <if test="title != null  and title != ''">and title = #{title}</if>
+            <if test="createOrganize != null  and createOrganize != ''">and create_organize = #{createOrganize}</if>
+            <if test="activityCategory != null ">and activity_category = #{activityCategory}</if>
+            <if test="address != null  and address != ''">and address = #{address}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="isTop != null ">and is_top = #{isTop}</if>
+        </where>
+        order by activity_id desc
+    </select>
+
+    <select id="selectTbActivityByActivityId" parameterType="Long" resultMap="TbActivityResult">
+        <include refid="selectTbActivityVo"/>
+        where activity_id = #{activityId}
+    </select>
+    <select id="selectActivityListByIds" parameterType="java.util.List" resultMap="TbActivityResult">
+        SELECT * FROM tb_activity WHERE activity_id IN
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and is_deleted = 0
+    </select>
+
+    <insert id="insertTbActivity" parameterType="TbActivity" useGeneratedKeys="true" keyProperty="activityId">
+        insert into tb_activity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="images != null and images != ''">images,</if>
+            <if test="startSignTime != null">start_sign_time,</if>
+            <if test="endSignTime != null">end_sign_time,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="createOrganize != null and createOrganize != ''">create_organize,</if>
+            <if test="activityCategory != null">activity_category,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="count != null">count,</if>
+            <if test="personCount != null">person_count,</if>
+            <if test="status != null">status,</if>
+            <if test="isTop != null">is_top,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="images != null and images != ''">#{images},</if>
+            <if test="startSignTime != null">#{startSignTime},</if>
+            <if test="endSignTime != null">#{endSignTime},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="createOrganize != null and createOrganize != ''">#{createOrganize},</if>
+            <if test="activityCategory != null">#{activityCategory},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="count != null">#{count},</if>
+            <if test="personCount != null">#{personCount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="isTop != null">#{isTop},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTbActivity" parameterType="TbActivity">
+        update tb_activity
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="images != null and images != ''">images = #{images},</if>
+            <if test="startSignTime != null">start_sign_time = #{startSignTime},</if>
+            <if test="endSignTime != null">end_sign_time = #{endSignTime},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="createOrganize != null and createOrganize != ''">create_organize = #{createOrganize},</if>
+            <if test="activityCategory != null">activity_category = #{activityCategory},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="personCount != null">person_count = #{personCount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isTop != null">is_top = #{isTop},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where activity_id = #{activityId}
+    </update>
+    <update id="updateDeleteTbActivityByActivityIds">
+        update tb_activity
+        set is_deleted = 1 where activity_id in
+        <foreach item="activityId" collection="array" open="(" separator="," close=")">
+            #{activityId}
+        </foreach>
+    </update>
+
+    <delete id="deleteTbActivityByActivityId" parameterType="Long">
+        delete
+        from tb_activity
+        where activity_id = #{activityId}
+    </delete>
+
+    <delete id="deleteTbActivityByActivityIds" parameterType="String">
+        delete from tb_activity where activity_id in
+        <foreach item="activityId" collection="array" open="(" separator="," close=")">
+            #{activityId}
+        </foreach>
+    </delete>
+</mapper>

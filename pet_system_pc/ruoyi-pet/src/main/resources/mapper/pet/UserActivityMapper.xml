@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.UserActivityMapper">
+
+    <resultMap type="UserActivity" id="UserActivityResult">
+        <result property="uaId" column="ua_id"/>
+        <result property="activityId" column="activity_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="contactName" column="contact_name"/>
+        <result property="contactPhone" column="contact_phone"/>
+        <result property="status" column="status"/>
+        <result property="cancelTime" column="cancel_time"/>
+        <result property="signTime" column="sign_time"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+    </resultMap>
+
+    <sql id="selectUserActivityVo">
+        select ua_id,
+               activity_id,
+               user_id,
+               contact_name,
+               contact_phone,
+               status,
+               cancel_time,
+               sign_time,
+               remark,
+               create_time,
+               create_by,
+               update_time,
+               update_by
+        from tb_user_activity
+    </sql>
+
+    <select id="selectUserActivityList" parameterType="UserActivity" resultMap="UserActivityResult">
+        <include refid="selectUserActivityVo"/>
+        <where>
+            <if test="activityId != null ">and activity_id = #{activityId}</if>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="contactName != null  and contactName != ''">and contact_name like concat('%', #{contactName},
+                '%')
+            </if>
+            <if test="contactPhone != null  and contactPhone != ''">and contact_phone = #{contactPhone}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="cancelTime != null ">and cancel_time = #{cancelTime}</if>
+            <if test="signTime != null ">and sign_time = #{signTime}</if>
+        </where>
+    </select>
+
+    <select id="selectUserActivityByUaId" parameterType="Long" resultMap="UserActivityResult">
+        <include refid="selectUserActivityVo"/>
+        where ua_id = #{uaId}
+    </select>
+    <select id="selectUserActivityByUserIdAndActivity" resultMap="UserActivityResult">
+        <include refid="selectUserActivityVo"/>
+        <where>
+            user_id = #{userId}
+            <if test="activityId != null ">and activity_id = #{activityId}</if>
+        </where>
+    </select>
+    <select id="selectUserActivityByUserId" resultType="java.lang.Long">
+        SELECT activity_id
+        FROM tb_user_activity
+        WHERE user_id = #{userId}
+    </select>
+
+
+    <insert id="insertUserActivity" parameterType="UserActivity" useGeneratedKeys="true" keyProperty="uaId">
+        insert into tb_user_activity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="activityId != null">activity_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="contactName != null and contactName != ''">contact_name,</if>
+            <if test="contactPhone != null and contactPhone != ''">contact_phone,</if>
+            <if test="status != null">status,</if>
+            <if test="cancelTime != null">cancel_time,</if>
+            <if test="signTime != null">sign_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="activityId != null">#{activityId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="contactName != null and contactName != ''">#{contactName},</if>
+            <if test="contactPhone != null and contactPhone != ''">#{contactPhone},</if>
+            <if test="status != null">#{status},</if>
+            <if test="cancelTime != null">#{cancelTime},</if>
+            <if test="signTime != null">#{signTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updateUserActivity" parameterType="UserActivity">
+        update tb_user_activity
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="activityId != null">activity_id = #{activityId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="contactName != null and contactName != ''">contact_name = #{contactName},</if>
+            <if test="contactPhone != null and contactPhone != ''">contact_phone = #{contactPhone},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="cancelTime != null">cancel_time = #{cancelTime},</if>
+            <if test="signTime != null">sign_time = #{signTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where ua_id = #{uaId}
+    </update>
+
+    <delete id="deleteUserActivityByUaId" parameterType="Long">
+        delete
+        from tb_user_activity
+        where ua_id = #{uaId}
+    </delete>
+
+    <delete id="deleteUserActivityByUaIds" parameterType="String">
+        delete from tb_user_activity where ua_id in
+        <foreach item="uaId" collection="array" open="(" separator="," close=")">
+            #{uaId}
+        </foreach>
+    </delete>
+</mapper>

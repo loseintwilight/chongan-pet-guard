@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "marked": "^17.0.1",
+    "mp-html": "^2.5.1"
+  }
+}

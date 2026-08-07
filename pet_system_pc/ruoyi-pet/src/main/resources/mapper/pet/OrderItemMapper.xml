@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.OrderItemMapper">
+
+    <resultMap type="OrderItem" id="OrderItemResult">
+        <result property="itemId" column="item_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="resourceName" column="resource_name"/>
+        <result property="price" column="price"/>
+        <result property="quantity" column="quantity"/>
+        <result property="totalPrice" column="total_price"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="selectOrderItemVo">
+        select item_id,
+               order_id,
+               resource_id,
+               resource_name,
+               price,
+               quantity,
+               total_price,
+               is_deleted
+        from tb_order_item
+    </sql>
+
+    <select id="selectOrderItemList" parameterType="OrderItem" resultMap="OrderItemResult">
+        <include refid="selectOrderItemVo"/>
+        <where>
+            <if test="orderId != null ">and order_id = #{orderId}</if>
+            <if test="resourceId != null ">and resource_id = #{resourceId}</if>
+            <if test="resourceName != null  and resourceName != ''">and resource_name like concat('%', #{resourceName},
+                '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOrderItemByItemId" parameterType="Long" resultMap="OrderItemResult">
+        <include refid="selectOrderItemVo"/>
+        where item_id = #{itemId}
+    </select>
+    <select id="selectOrderItemByOrderId" resultMap="OrderItemResult">
+        <include refid="selectOrderItemVo"/>
+        where order_id = #{orderId}
+    </select>
+
+
+    <insert id="insertOrderItem" parameterType="OrderItem" useGeneratedKeys="true" keyProperty="itemId">
+        insert into tb_order_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="resourceId != null">resource_id,</if>
+            <if test="resourceName != null">resource_name,</if>
+            <if test="price != null">price,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="totalPrice != null">total_price,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="resourceId != null">#{resourceId},</if>
+            <if test="resourceName != null">#{resourceName},</if>
+            <if test="price != null">#{price},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="totalPrice != null">#{totalPrice},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOrderItem" parameterType="OrderItem">
+        update tb_order_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="resourceId != null">resource_id = #{resourceId},</if>
+            <if test="resourceName != null">resource_name = #{resourceName},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="totalPrice != null">total_price = #{totalPrice},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where item_id = #{itemId}
+    </update>
+
+    <delete id="deleteOrderItemByItemId" parameterType="Long">
+        delete
+        from tb_order_item
+        where item_id = #{itemId}
+    </delete>
+
+    <delete id="deleteOrderItemByItemIds" parameterType="String">
+        delete from tb_order_item where item_id in
+        <foreach item="itemId" collection="array" open="(" separator="," close=")">
+            #{itemId}
+        </foreach>
+    </delete>
+    <delete id="deleteOrderItemByOrderId">
+        delete
+        from tb_order_item
+        where order_id = #{orderId}
+    </delete>
+</mapper>

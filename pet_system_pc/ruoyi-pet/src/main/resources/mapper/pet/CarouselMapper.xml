@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.CarouselMapper">
+
+    <resultMap type="Carousel" id="CarouselResult">
+        <result property="carouselId" column="carousel_id"/>
+        <result property="images" column="images"/>
+        <result property="linkUrl" column="link_url"/>
+        <result property="linkType" column="link_type"/>
+        <result property="title" column="title"/>
+        <result property="sort" column="sort"/>
+        <result property="status" column="status"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectCarouselVo">
+        select carousel_id,
+               images,
+               link_url,
+               link_type,
+               title,
+               sort,
+               status,
+               update_time,
+               update_by,
+               create_time,
+               create_by,
+               remark
+        from tb_carousel
+    </sql>
+
+    <select id="selectCarouselList" parameterType="Carousel" resultMap="CarouselResult">
+        <include refid="selectCarouselVo"/>
+        <where>
+            <if test="title != null  and title != ''">and title = #{title}</if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+        order by sort
+    </select>
+
+    <select id="selectCarouselByCarouselId" parameterType="Long" resultMap="CarouselResult">
+        <include refid="selectCarouselVo"/>
+        where carousel_id = #{carouselId}
+    </select>
+
+    <insert id="insertCarousel" parameterType="Carousel" useGeneratedKeys="true" keyProperty="carouselId">
+        insert into tb_carousel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="images != null">images,</if>
+            <if test="linkUrl != null">link_url,</if>
+            <if test="linkType != null">link_type,</if>
+            <if test="title != null">title,</if>
+            <if test="sort != null">sort,</if>
+            <if test="status != null">status,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="images != null">#{images},</if>
+            <if test="linkUrl != null">#{linkUrl},</if>
+            <if test="linkType != null">#{linkType},</if>
+            <if test="title != null">#{title},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="status != null">#{status},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCarousel" parameterType="Carousel">
+        update tb_carousel
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="images != null">images = #{images},</if>
+            <if test="linkUrl != null">link_url = #{linkUrl},</if>
+            <if test="linkType != null">link_type = #{linkType},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where carousel_id = #{carouselId}
+    </update>
+
+    <delete id="deleteCarouselByCarouselId" parameterType="Long">
+        delete
+        from tb_carousel
+        where carousel_id = #{carouselId}
+    </delete>
+
+    <delete id="deleteCarouselByCarouselIds" parameterType="String">
+        delete from tb_carousel where carousel_id in
+        <foreach item="carouselId" collection="array" open="(" separator="," close=")">
+            #{carouselId}
+        </foreach>
+    </delete>
+</mapper>

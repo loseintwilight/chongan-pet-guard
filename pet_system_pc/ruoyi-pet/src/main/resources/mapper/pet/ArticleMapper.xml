@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.ArticleMapper">
+
+    <resultMap type="Article" id="ArticleResult">
+        <result property="articleId" column="article_id"/>
+        <result property="title" column="title"/>
+        <result property="coverImage" column="cover_image"/>
+        <result property="content" column="content"/>
+        <result property="author" column="author"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="status" column="status"/>
+        <result property="isTop" column="is_top"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remark" column="remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="selectArticleVo">
+        select article_id,
+               title,
+               cover_image,
+               content,
+               author,
+               view_count,
+               status,
+               is_top,
+               publish_time,
+               create_time,
+               create_by,
+               update_time,
+               update_by,
+               remark,
+               is_deleted
+        from tb_article
+    </sql>
+
+    <select id="selectArticleList" parameterType="Article" resultMap="ArticleResult">
+        <include refid="selectArticleVo"/>
+        <where>
+            is_deleted = 0
+            <if test="title != null  and title != ''">and title = #{title}</if>
+            <if test="author != null  and author != ''">and author = #{author}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="publishTime != null ">and publish_time = #{publishTime}</if>
+        </where>
+        order by article_id desc
+    </select>
+
+    <select id="selectArticleByArticleId" parameterType="Long" resultMap="ArticleResult">
+        <include refid="selectArticleVo"/>
+        where article_id = #{articleId}
+    </select>
+
+    <insert id="insertArticle" parameterType="Article" useGeneratedKeys="true" keyProperty="articleId">
+        insert into tb_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="coverImage != null and coverImage != ''">cover_image,</if>
+            <if test="content != null">content,</if>
+            <if test="author != null and author != ''">author,</if>
+            <if test="viewCount != null">view_count,</if>
+            <if test="status != null">status,</if>
+            <if test="isTop != null">is_top,</if>
+            <if test="publishTime != null">publish_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="coverImage != null and coverImage != ''">#{coverImage},</if>
+            <if test="content != null">#{content},</if>
+            <if test="author != null and author != ''">#{author},</if>
+            <if test="viewCount != null">#{viewCount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="isTop != null">#{isTop},</if>
+            <if test="publishTime != null">#{publishTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateArticle" parameterType="Article">
+        update tb_article
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="coverImage != null and coverImage != ''">cover_image = #{coverImage},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="author != null and author != ''">author = #{author},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isTop != null">is_top = #{isTop},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where article_id = #{articleId}
+    </update>
+    <update id="updateAddViewCount">
+        UPDATE tb_article
+        SET view_count = view_count + 1
+        WHERE article_id = #{articleId}
+    </update>
+    <update id="updateDeleteArticleByArticleIds">
+        update tb_article
+        set is_deleted = 1
+        where article_id in
+        <foreach item="articleId" collection="array" open="(" separator="," close=")">
+            #{articleId}
+        </foreach>
+    </update>
+
+    <delete id="deleteArticleByArticleId" parameterType="Long">
+        delete
+        from tb_article
+        where article_id = #{articleId}
+    </delete>
+
+    <delete id="deleteArticleByArticleIds" parameterType="String">
+        delete from tb_article where article_id in
+        <foreach item="articleId" collection="array" open="(" separator="," close=")">
+            #{articleId}
+        </foreach>
+    </delete>
+</mapper>

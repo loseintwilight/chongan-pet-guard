@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.UserNoticeMapper">
+
+    <resultMap type="UserNotice" id="UserNoticeResult">
+        <result property="unId" column="un_id"/>
+        <result property="noticeId" column="notice_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="readStatus" column="read_status"/>
+        <result property="readTime" column="read_time"/>
+        <result property="createTime" column="create_time"/>
+
+    </resultMap>
+
+    <sql id="selectUserNoticeVo">
+        select un_id, notice_id, user_id, read_status, read_time, create_time
+        from tb_user_notice
+    </sql>
+
+    <select id="selectUserNoticeList" parameterType="UserNotice" resultMap="UserNoticeResult">
+        <include refid="selectUserNoticeVo"/>
+        <where>
+            <if test="noticeId != null ">and notice_id = #{noticeId}</if>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="readStatus != null ">and read_status = #{readStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectUserNoticeByUnId" parameterType="Long" resultMap="UserNoticeResult">
+        <include refid="selectUserNoticeVo"/>
+        where un_id = #{unId}
+    </select>
+    <select id="selectUserNoticeByNoticeId" resultMap="UserNoticeResult">
+        <include refid="selectUserNoticeVo"/>
+        where notice_id = #{noticeId}
+    </select>
+
+    <insert id="insertUserNotice" parameterType="UserNotice" useGeneratedKeys="true" keyProperty="unId">
+        insert into tb_user_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">notice_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="readStatus != null">read_status,</if>
+            <if test="readTime != null">read_time,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">#{noticeId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="readStatus != null">#{readStatus},</if>
+            <if test="readTime != null">#{readTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateUserNotice" parameterType="UserNotice">
+        update tb_user_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="noticeId != null">notice_id = #{noticeId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="readStatus != null">read_status = #{readStatus},</if>
+            <if test="readTime != null">read_time = #{readTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where un_id = #{unId}
+    </update>
+    <update id="updateReadStatus">
+        UPDATE tb_user_notice
+        SET read_status = 1,
+            read_time   = #{readTime}
+        WHERE user_id = #{userId}
+          AND notice_id = #{noticeId}
+    </update>
+
+    <delete id="deleteUserNoticeByUnId" parameterType="Long">
+        delete
+        from tb_user_notice
+        where un_id = #{unId}
+    </delete>
+
+    <delete id="deleteUserNoticeByUnIds" parameterType="String">
+        delete from tb_user_notice where un_id in
+        <foreach item="unId" collection="array" open="(" separator="," close=")">
+            #{unId}
+        </foreach>
+    </delete>
+</mapper>

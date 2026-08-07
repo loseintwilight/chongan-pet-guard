@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.NoticeMapper">
+
+    <resultMap type="Notice" id="NoticeResult">
+        <result property="noticeId" column="notice_id"/>
+        <result property="templateId" column="template_id"/>
+        <result property="title" column="title"/>
+        <result property="noticeMain" column="notice_main"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="publishName" column="publish_name"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remark" column="remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="readStatus" column="read_status"/>
+    </resultMap>
+
+    <sql id="selectNoticeVo">
+        select notice_id,
+               template_id,
+               title,
+               notice_main,
+               publish_time,
+               publish_name,
+               status,
+               create_time,
+               create_by,
+               update_time,
+               update_by,
+               remark,
+               is_deleted
+        from tb_notice
+    </sql>
+
+    <select id="selectNoticeList" parameterType="Notice" resultMap="NoticeResult">
+        <include refid="selectNoticeVo"/>
+        <where>
+            is_deleted = 0
+            <if test="templateId != null ">and template_id = #{templateId}</if>
+            <if test="title != null  and title != ''">and title = #{title}</if>
+            <if test="publishTime != null ">and publish_time = #{publishTime}</if>
+            <if test="publishName != null  and publishName != ''">and publish_name like concat('%', #{publishName},
+                '%')
+            </if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+        order by notice_id desc
+    </select>
+
+    <select id="selectNoticeByNoticeId" parameterType="Long" resultMap="NoticeResult">
+        <include refid="selectNoticeVo"/>
+        where notice_id = #{noticeId}
+    </select>
+
+    <select id="selectPersonNoticeByUserId" parameterType="Notice" resultMap="NoticeResult">
+        select n.notice_id,
+               template_id,
+               title,
+               notice_main,
+               publish_time,
+               publish_name,
+               status,
+               n.create_time,
+               n.create_by,
+               n.update_time,
+               n.update_by,
+               n.remark,
+               n.is_deleted,
+               un.read_status
+        from tb_notice n
+                 LEFT JOIN tb_user_notice un ON un.notice_id = n.notice_id
+        WHERE un.user_id = #{userId}
+          and n.is_deleted = 0
+        order by notice_id desc
+    </select>
+
+    <select id="getNumberNoticeNotRead" resultType="java.lang.Integer">
+        SELECT count(n.notice_id)
+        FROM tb_notice n
+                 LEFT JOIN tb_user_notice un ON un.notice_id = n.notice_id
+        WHERE un.user_id = #{userId}
+          AND n.is_deleted = 0
+          AND un.read_status = 0
+    </select>
+
+    <insert id="insertNotice" parameterType="Notice" useGeneratedKeys="true" keyProperty="noticeId"
+            keyColumn="notice_id">
+        insert into tb_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">template_id,</if>
+            <if test="title != null">title,</if>
+            <if test="noticeMain != null">notice_main,</if>
+            <if test="publishTime != null">publish_time,</if>
+            <if test="publishName != null">publish_name,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateId != null">#{templateId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="noticeMain != null">#{noticeMain},</if>
+            <if test="publishTime != null">#{publishTime},</if>
+            <if test="publishName != null">#{publishName},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateNotice" parameterType="Notice">
+        update tb_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateId != null">template_id = #{templateId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="noticeMain != null">notice_main = #{noticeMain},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="publishName != null">publish_name = #{publishName},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where notice_id = #{noticeId}
+    </update>
+    <update id="updateDeleteNoticeByNoticeIds">
+        update tb_notice
+        set is_deleted = 1
+        where notice_id in
+        <foreach item="noticeId" collection="array" open="(" separator="," close=")">
+            #{noticeId}
+        </foreach>
+    </update>
+
+    <delete id="deleteNoticeByNoticeId" parameterType="Long">
+        delete
+        from tb_notice
+        where notice_id = #{noticeId}
+    </delete>
+
+    <delete id="deleteNoticeByNoticeIds" parameterType="String">
+        delete from tb_notice where notice_id in
+        <foreach item="noticeId" collection="array" open="(" separator="," close=")">
+            #{noticeId}
+        </foreach>
+    </delete>
+</mapper>

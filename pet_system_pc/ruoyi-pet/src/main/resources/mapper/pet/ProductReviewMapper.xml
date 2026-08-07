@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.ProductReviewMapper">
+
+    <resultMap type="ProductReview" id="ProductReviewResult">
+        <result property="reviewId" column="review_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderItemId" column="order_item_id"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="specName" column="spec_name"/>
+        <result property="rating" column="rating"/>
+        <result property="content" column="content"/>
+        <result property="images" column="images"/>
+        <result property="isAnonymous" column="is_anonymous"/>
+        <result property="replyContent" column="reply_content"/>
+        <result property="replyTime" column="reply_time"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="userName" column="user_name"/>
+        <result property="userAvatar" column="user_avatar"/>
+    </resultMap>
+
+    <sql id="selectProductReviewVo">
+        select r.review_id,
+               r.order_id,
+               r.order_item_id,
+               r.resource_id,
+               r.user_id,
+               r.spec_name,
+               r.rating,
+               r.content,
+               r.images,
+               r.is_anonymous,
+               r.reply_content,
+               r.reply_time,
+               r.like_count,
+               r.status,
+               r.create_time,
+               r.update_time,
+               r.is_deleted,
+               case when r.is_anonymous = 1 then '***用户'
+                    else ifnull(u.nick_name, concat('用户', r.user_id))
+               end as user_name,
+               u.avatar as user_avatar
+        from tb_product_review r
+        left join sys_user u on r.user_id = u.user_id
+    </sql>
+
+    <select id="selectProductReviewList" parameterType="ProductReview" resultMap="ProductReviewResult">
+        <include refid="selectProductReviewVo"/>
+        <where>
+            r.is_deleted = 0
+            <if test="orderId != null">and r.order_id = #{orderId}</if>
+            <if test="resourceId != null">and r.resource_id = #{resourceId}</if>
+            <if test="userId != null">and r.user_id = #{userId}</if>
+            <if test="rating != null">and r.rating = #{rating}</if>
+            <if test="status != null">and r.status = #{status}</if>
+        </where>
+        order by r.create_time desc
+    </select>
+
+    <select id="selectProductReviewListByResourceId" resultMap="ProductReviewResult">
+        <include refid="selectProductReviewVo"/>
+        <where>
+            r.is_deleted = 0
+            and r.status = 1
+            and r.resource_id = #{resourceId}
+        </where>
+        <choose>
+            <when test="orderBy == 'likeCount'">
+                order by r.like_count
+            </when>
+            <otherwise>
+                order by r.create_time
+            </otherwise>
+        </choose>
+        <choose>
+            <when test="isAsc == 'asc'">
+                asc
+            </when>
+            <otherwise>
+                desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="selectProductReviewByReviewId" parameterType="Long" resultMap="ProductReviewResult">
+        <include refid="selectProductReviewVo"/>
+        where r.review_id = #{reviewId}
+    </select>
+
+    <insert id="insertProductReview" parameterType="ProductReview" useGeneratedKeys="true" keyProperty="reviewId">
+        insert into tb_product_review
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="orderItemId != null">order_item_id,</if>
+            <if test="resourceId != null">resource_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="specName != null and specName != ''">spec_name,</if>
+            <if test="rating != null">rating,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="images != null and images != ''">images,</if>
+            <if test="isAnonymous != null">is_anonymous,</if>
+            <if test="replyContent != null and replyContent != ''">reply_content,</if>
+            <if test="replyTime != null">reply_time,</if>
+            <if test="likeCount != null">like_count,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="orderItemId != null">#{orderItemId},</if>
+            <if test="resourceId != null">#{resourceId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="specName != null and specName != ''">#{specName},</if>
+            <if test="rating != null">#{rating},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="images != null and images != ''">#{images},</if>
+            <if test="isAnonymous != null">#{isAnonymous},</if>
+            <if test="replyContent != null and replyContent != ''">#{replyContent},</if>
+            <if test="replyTime != null">#{replyTime},</if>
+            <if test="likeCount != null">#{likeCount},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateProductReview" parameterType="ProductReview">
+        update tb_product_review
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="orderItemId != null">order_item_id = #{orderItemId},</if>
+            <if test="resourceId != null">resource_id = #{resourceId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="specName != null and specName != ''">spec_name = #{specName},</if>
+            <if test="rating != null">rating = #{rating},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="images != null and images != ''">images = #{images},</if>
+            <if test="isAnonymous != null">is_anonymous = #{isAnonymous},</if>
+            <if test="replyContent != null">reply_content = #{replyContent},</if>
+            <if test="replyTime != null">reply_time = #{replyTime},</if>
+            <if test="likeCount != null">like_count = #{likeCount},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where review_id = #{reviewId}
+    </update>
+
+    <update id="updateLikeCount">
+        update tb_product_review
+        set like_count = like_count + #{increment}
+        where review_id = #{reviewId}
+    </update>
+
+    <delete id="deleteProductReviewByReviewId" parameterType="Long">
+        delete from tb_product_review where review_id = #{reviewId}
+    </delete>
+
+    <delete id="deleteProductReviewByReviewIds" parameterType="String">
+        delete from tb_product_review where review_id in
+        <foreach item="reviewId" collection="array" open="(" separator="," close=")">
+            #{reviewId}
+        </foreach>
+    </delete>
+</mapper>

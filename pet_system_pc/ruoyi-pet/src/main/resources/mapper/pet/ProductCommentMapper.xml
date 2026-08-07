@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.ProductCommentMapper">
+
+    <resultMap type="com.ruoyi.pet.domain.ProductComment" id="ProductCommentResult">
+        <result property="commentId" column="comment_id"/>
+        <result property="reviewId" column="review_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="replyToId" column="reply_to_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="shopId" column="shop_id"/>
+        <result property="userType" column="user_type"/>
+        <result property="commentType" column="comment_type"/>
+        <result property="content" column="content"/>
+        <result property="images" column="images"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="userName" column="user_name"/>
+        <result property="shopName" column="shop_name"/>
+    </resultMap>
+
+    <sql id="selectCommentVo">
+        select c.comment_id, c.review_id, c.parent_id, c.reply_to_id,
+               c.user_id, c.shop_id, c.user_type, c.comment_type,
+               c.content, c.images, c.like_count,
+               c.status, c.create_time, c.update_time, c.is_deleted
+        from tb_product_comment c
+    </sql>
+
+    <select id="selectProductCommentList" parameterType="com.ruoyi.pet.domain.ProductComment" resultMap="ProductCommentResult">
+        <include refid="selectCommentVo"/>
+        <where>
+            c.is_deleted = 0
+            <if test="reviewId != null">
+                AND c.review_id = #{reviewId}
+            </if>
+            <if test="userId != null">
+                AND c.user_id = #{userId}
+            </if>
+            <if test="shopId != null">
+                AND c.shop_id = #{shopId}
+            </if>
+            <if test="userType != null">
+                AND c.user_type = #{userType}
+            </if>
+            <if test="commentType != null">
+                AND c.comment_type = #{commentType}
+            </if>
+            <if test="status != null">
+                AND c.status = #{status}
+            </if>
+            <if test="parentId != null">
+                AND c.parent_id = #{parentId}
+            </if>
+        </where>
+        order by c.create_time desc
+    </select>
+
+    <select id="selectCommentsByReviewIds" resultMap="ProductCommentResult">
+        SELECT c.*, u.nick_name as user_name, s.shop_name
+        FROM tb_product_comment c
+        LEFT JOIN sys_user u ON c.user_id = u.user_id
+        LEFT JOIN tb_shop s ON c.shop_id = s.shop_id
+        WHERE c.review_id IN
+        <foreach collection="reviewIds" item="rid" open="(" separator="," close=")">
+            #{rid}
+        </foreach>
+          AND c.is_deleted = 0
+          AND c.status = 1
+        ORDER BY c.create_time ASC
+    </select>
+
+    <select id="selectRepliesByParentIds" resultMap="ProductCommentResult">
+        SELECT c.*, u.nick_name as user_name, s.shop_name
+        FROM tb_product_comment c
+        LEFT JOIN sys_user u ON c.user_id = u.user_id
+        LEFT JOIN tb_shop s ON c.shop_id = s.shop_id
+        WHERE c.parent_id IN
+        <foreach collection="parentIds" item="pid" open="(" separator="," close=")">
+            #{pid}
+        </foreach>
+          AND c.is_deleted = 0
+          AND c.status = 1
+        ORDER BY c.create_time asc
+    </select>
+
+    <select id="selectProductCommentById" parameterType="Long" resultMap="ProductCommentResult">
+        <include refid="selectCommentVo"/>
+        where comment_id = #{commentId} and is_deleted = 0
+    </select>
+
+    <insert id="insertProductComment" parameterType="com.ruoyi.pet.domain.ProductComment" useGeneratedKeys="true" keyProperty="commentId">
+        insert into tb_product_comment (
+            review_id, parent_id, reply_to_id,
+            user_id, shop_id, user_type, comment_type,
+            content, images,
+            like_count, status, create_time, is_deleted
+        ) values (
+            #{reviewId}, #{parentId}, #{replyToId},
+            #{userId}, #{shopId}, #{userType}, #{commentType},
+            #{content}, #{images},
+            #{likeCount}, #{status}, sysdate(), 0
+        )
+    </insert>
+
+    <update id="updateLikeCount">
+        update tb_product_comment set like_count = ifnull(like_count,0) + #{delta}
+        where comment_id = #{commentId} and is_deleted = 0
+    </update>
+
+</mapper>

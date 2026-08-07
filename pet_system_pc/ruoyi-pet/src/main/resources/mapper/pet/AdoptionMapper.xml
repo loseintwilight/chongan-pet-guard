@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.AdoptionMapper">
+
+    <resultMap type="Adoption" id="AdoptionResult">
+        <result property="adoptionId" column="adoption_id"/>
+        <result property="petId" column="pet_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="applicationName" column="application_name"/>
+        <result property="applicationPhone" column="application_phone"/>
+        <result property="experience" column="experience"/>
+        <result property="reason" column="reason"/>
+        <result property="status" column="status"/>
+        <result property="reviewerId" column="reviewer_id"/>
+        <result property="reviewTime" column="review_time"/>
+        <result property="reviewRemark" column="review_remark"/>
+        <result property="adoptTime" column="adopt_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <association property="pet" javaType="Pet">
+            <result property="petId" column="pet_id"/>
+            <result property="name" column="pet_name"/>
+            <result property="species" column="species"/>
+            <result property="breed" column="breed"/>
+            <result property="gender" column="gender"/>
+            <result property="age" column="age"/>
+            <result property="healthInfo" column="health_info"/>
+            <result property="neuter" column="neuter"/>
+            <result property="immunity" column="immunity"/>
+            <result property="insectRepellent" column="insect_repellent"/>
+            <result property="dewormingInterval" column="deworming_interval"/>
+            <result property="insectRepellentLastTime" column="insect_repellent_last_time"/>
+            <result property="description" column="description"/>
+            <result property="status" column="pet_status"/>
+            <result property="location" column="location"/>
+            <result property="images" column="images"/>
+            <result property="deptId" column="dept_id"/>
+        </association>
+    </resultMap>
+
+    <!--    <sql id="selectAdoptionVo">-->
+    <!--        select adoption_id, pet_id, user_id, application_name, application_phone, experience, reason, status, reviewer_id, review_time, review_remark, adopt_time, create_time, create_by, update_time, update_by, is_deleted from tb_adoption-->
+    <!--    </sql>-->
+    <sql id="selectAdoptionVo">
+        select a.adoption_id,
+               a.pet_id,
+               a.user_id,
+               a.application_name,
+               a.application_phone,
+               a.experience,
+               a.reason,
+               a.status,
+               a.reviewer_id,
+               a.review_time,
+               a.review_remark,
+               a.adopt_time,
+               a.create_time,
+               a.create_by,
+               a.update_time,
+               a.update_by,
+               a.is_deleted,
+               p.name   as pet_name,
+               p.species,
+               p.breed,
+               p.gender,
+               p.age,
+               p.health_info,
+               p.neuter,
+               p.immunity,
+               p.insect_repellent,
+               p.deworming_interval,
+               p.insect_repellent_last_time,
+               p.description,
+               p.status as pet_status,
+               p.location,
+               p.images,
+               p.dept_id
+        from tb_adoption a
+                 left join tb_pet p on a.pet_id = p.pet_id
+    </sql>
+
+    <select id="selectAdoptionList" parameterType="Adoption" resultMap="AdoptionResult">
+        <include refid="selectAdoptionVo"/>
+        <where>
+            a.is_deleted = 0
+            <if test="applicationName != null  and applicationName != ''">and application_name like concat('%',
+                #{applicationName}, '%')
+            </if>
+            <if test="applicationPhone != null  and applicationPhone != ''">and application_phone =
+                #{applicationPhone}
+            </if>
+            <if test="experience != null  and experience != ''">and experience = #{experience}</if>
+            <if test="reason != null  and reason != ''">and reason = #{reason}</if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+        order by adoption_id desc
+    </select>
+
+    <select id="selectAdoptionByAdoptionId" parameterType="Long" resultMap="AdoptionResult">
+        <include refid="selectAdoptionVo"/>
+        where adoption_id = #{adoptionId}
+    </select>
+
+    <insert id="insertAdoption" parameterType="Adoption" useGeneratedKeys="true" keyProperty="adoptionId">
+        insert into tb_adoption
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="petId != null">pet_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="applicationName != null and applicationName != ''">application_name,</if>
+            <if test="applicationPhone != null and applicationPhone != ''">application_phone,</if>
+            <if test="experience != null and experience != ''">experience,</if>
+            <if test="reason != null and reason != ''">reason,</if>
+            <if test="status != null">status,</if>
+            <if test="reviewerId != null">reviewer_id,</if>
+            <if test="reviewTime != null">review_time,</if>
+            <if test="reviewRemark != null">review_remark,</if>
+            <if test="adoptTime != null">adopt_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="petId != null">#{petId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="applicationName != null and applicationName != ''">#{applicationName},</if>
+            <if test="applicationPhone != null and applicationPhone != ''">#{applicationPhone},</if>
+            <if test="experience != null and experience != ''">#{experience},</if>
+            <if test="reason != null and reason != ''">#{reason},</if>
+            <if test="status != null">#{status},</if>
+            <if test="reviewerId != null">#{reviewerId},</if>
+            <if test="reviewTime != null">#{reviewTime},</if>
+            <if test="reviewRemark != null">#{reviewRemark},</if>
+            <if test="adoptTime != null">#{adoptTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAdoption" parameterType="Adoption">
+        update tb_adoption
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="petId != null">pet_id = #{petId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="applicationName != null and applicationName != ''">application_name = #{applicationName},</if>
+            <if test="applicationPhone != null and applicationPhone != ''">application_phone = #{applicationPhone},</if>
+            <if test="experience != null and experience != ''">experience = #{experience},</if>
+            <if test="reason != null and reason != ''">reason = #{reason},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="reviewerId != null">reviewer_id = #{reviewerId},</if>
+            <if test="reviewTime != null">review_time = #{reviewTime},</if>
+            <if test="reviewRemark != null">review_remark = #{reviewRemark},</if>
+            <if test="adoptTime != null">adopt_time = #{adoptTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where adoption_id = #{adoptionId}
+    </update>
+    <update id="updateDeleteAdoptionByAdoptionIds">
+        update tb_adoption
+        set is_deleted = 1
+        where adoption_id in
+        <foreach item="adoptionId" collection="array" open="(" separator="," close=")">
+            #{adoptionId}
+        </foreach>
+    </update>
+
+    <delete id="deleteAdoptionByAdoptionId" parameterType="Long">
+        delete
+        from tb_adoption
+        where adoption_id = #{adoptionId}
+    </delete>
+
+    <delete id="deleteAdoptionByAdoptionIds" parameterType="String">
+        delete from tb_adoption where adoption_id in
+        <foreach item="adoptionId" collection="array" open="(" separator="," close=")">
+            #{adoptionId}
+        </foreach>
+    </delete>
+
+
+    <select id="selectMyAppliedPets" resultMap="AdoptionResult">
+        <include refid="selectAdoptionVo"/>
+        where a.is_deleted = 0
+        and p.is_deleted = 0
+        and a.user_id = #{userId}
+        <if test="status != null">
+            and a.status = #{status}
+        </if>
+        order by a.create_time desc
+    </select>
+</mapper>

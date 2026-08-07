@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.PetMapper">
+
+    <resultMap type="Pet" id="PetResult">
+        <result property="petId" column="pet_id"/>
+        <result property="name" column="name"/>
+        <result property="species" column="species"/>
+        <result property="breed" column="breed"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="healthInfo" column="health_info"/>
+        <result property="neuter" column="neuter"/>
+        <result property="immunity" column="immunity"/>
+        <result property="insectRepellent" column="insect_repellent"/>
+        <result property="dewormingInterval" column="deworming_interval"/>
+        <result property="insectRepellentLastTime" column="insect_repellent_last_time"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="location" column="location"/>
+        <result property="images" column="images"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="remark" column="remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <resultMap type="Shop" id="ShopResult">
+        <result property="shopId" column="shop_id"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="mainImage" column="main_image"/>
+        <result property="userId" column="user_id"/>
+        <result property="legalPhone" column="legal_phone"/>
+        <result property="legalName" column="legal_name"/>
+        <result property="legalNumber" column="legal_number"/>
+        <result property="licenseNumber" column="license_number"/>
+        <result property="licenseImage" column="license_image"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="district" column="district"/>
+        <result property="address" column="address"/>
+        <result property="ownerPhone" column="owner_phone"/>
+        <result property="bussinessHours" column="bussiness_hours"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="creareBy" column="creare_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="reviewId" column="review_id"/>
+        <result property="reviewTime" column="review_time"/>
+        <result property="reviewRemark" column="review_remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="selectPetVo">
+        select pet_id,
+               name,
+               species,
+               breed,
+               gender,
+               age,
+               health_info,
+               neuter,
+               immunity,
+               insect_repellent,
+               deworming_interval,
+               insect_repellent_last_time,
+               description,
+               status,
+               location,
+               images,
+               dept_id,
+               create_time,
+               create_by,
+               update_time,
+               update_by,
+               remark,
+               is_deleted
+        from tb_pet
+    </sql>
+
+    <select id="selectPetList" parameterType="Pet" resultMap="PetResult">
+        <include refid="selectPetVo"/>
+        <where>
+            is_deleted = 0
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="species != null ">and species = #{species}</if>
+            <if test="breed != null  and breed != ''">and breed = #{breed}</if>
+            <if test="gender != null ">and gender = #{gender}</if>
+            <if test="neuter != null ">and neuter = #{neuter}</if>
+            <if test="immunity != null ">and immunity = #{immunity}</if>
+            <if test="insectRepellent != null ">and insect_repellent = #{insectRepellent}</if>
+            <if test="status != null ">and status = #{status}</if>
+            <if test="location != null  and location != ''">and location = #{location}</if>
+            <if test="deptId != null ">and dept_id = #{deptId}</if>
+        </where>
+        order by pet_id desc
+    </select>
+
+    <select id="selectPetByPetId" parameterType="Long" resultMap="PetResult">
+        <include refid="selectPetVo"/>
+        where pet_id = #{petId}
+    </select>
+
+    <select id="selectShopList" resultMap="ShopResult">
+        select *
+        from tb_shop
+    </select>
+    <select id="selectPetCountByPetType" resultType="java.lang.Integer">
+        select count(pet_id)
+        from tb_pet
+        where species = #{i}
+    </select>
+
+
+    <insert id="insertPet" parameterType="Pet" useGeneratedKeys="true" keyProperty="petId">
+        insert into tb_pet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="species != null">species,</if>
+            <if test="breed != null">breed,</if>
+            <if test="gender != null">gender,</if>
+            <if test="age != null">age,</if>
+            <if test="healthInfo != null">health_info,</if>
+            <if test="neuter != null">neuter,</if>
+            <if test="immunity != null">immunity,</if>
+            <if test="insectRepellent != null">insect_repellent,</if>
+            <if test="dewormingInterval != null">deworming_interval,</if>
+            <if test="insectRepellentLastTime != null">insect_repellent_last_time,</if>
+            <if test="description != null">description,</if>
+            <if test="status != null">status,</if>
+            <if test="location != null">location,</if>
+            <if test="images != null">images,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remark != null">remark,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="species != null">#{species},</if>
+            <if test="breed != null">#{breed},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="age != null">#{age},</if>
+            <if test="healthInfo != null">#{healthInfo},</if>
+            <if test="neuter != null">#{neuter},</if>
+            <if test="immunity != null">#{immunity},</if>
+            <if test="insectRepellent != null">#{insectRepellent},</if>
+            <if test="dewormingInterval != null">#{dewormingInterval},</if>
+            <if test="insectRepellentLastTime != null">#{insectRepellentLastTime},</if>
+            <if test="description != null">#{description},</if>
+            <if test="status != null">#{status},</if>
+            <if test="location != null">#{location},</if>
+            <if test="images != null">#{images},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePet" parameterType="Pet">
+        update tb_pet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="species != null">species = #{species},</if>
+            <if test="breed != null">breed = #{breed},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="healthInfo != null">health_info = #{healthInfo},</if>
+            <if test="neuter != null">neuter = #{neuter},</if>
+            <if test="immunity != null">immunity = #{immunity},</if>
+            <if test="insectRepellent != null">insect_repellent = #{insectRepellent},</if>
+            <if test="dewormingInterval != null">deworming_interval = #{dewormingInterval},</if>
+            <if test="insectRepellentLastTime != null">insect_repellent_last_time = #{insectRepellentLastTime},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="images != null">images = #{images},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where pet_id = #{petId}
+    </update>
+    <update id="updateDeletePetByPetIds">
+        update tb_pet
+        set is_deleted = 1
+    </update>
+
+    <delete id="deletePetByPetId" parameterType="Long">
+        delete
+        from tb_pet
+        set pet_id = #{petId}
+        where pet_id in
+        <foreach item="petId" collection="array" open="(" separator="," close=")">
+            #{petId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePetByPetIds" parameterType="String">
+        delete from tb_pet where pet_id in
+        <foreach item="petId" collection="array" open="(" separator="," close=")">
+            #{petId}
+        </foreach>
+    </delete>
+</mapper>

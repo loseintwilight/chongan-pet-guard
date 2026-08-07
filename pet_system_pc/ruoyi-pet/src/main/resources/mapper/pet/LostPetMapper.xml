@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.LostPetMapper">
+
+    <resultMap type="LostPet" id="LostPetResult">
+        <result property="lostId" column="lost_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="ownerName" column="owner_name"/>
+        <result property="ownerPhone" column="owner_phone"/>
+        <result property="petName" column="pet_name"/>
+        <result property="species" column="species"/>
+        <result property="breed" column="breed"/>
+        <result property="features" column="features"/>
+        <result property="message" column="message"/>
+        <result property="lostLocation" column="lost_location"/>
+        <result property="lostTime" column="lost_time"/>
+        <result property="reward" column="reward"/>
+        <result property="images" column="images"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="selectLostPetVo">
+        select lost_id,
+               user_id,
+               owner_name,
+               owner_phone,
+               pet_name,
+               species,
+               breed,
+               features,
+               message,
+               lost_location,
+               lost_time,
+               reward,
+               images,
+               status,
+               create_time,
+               create_by,
+               update_time,
+               update_by,
+               is_deleted
+        from tb_lost_pet
+    </sql>
+
+    <select id="selectLostPetList" parameterType="LostPet" resultMap="LostPetResult">
+        <include refid="selectLostPetVo"/>
+        <where>
+            is_deleted = 0
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="ownerName != null  and ownerName != ''">and owner_name like concat('%', #{ownerName}, '%')</if>
+            <if test="ownerPhone != null  and ownerPhone != ''">and owner_phone like concat('%', #{ownerPhone}, '%')
+            </if>
+            <if test="petName != null  and petName != ''">and pet_name like concat('%', #{petName}, '%')</if>
+            <if test="species != null ">and species = #{species}</if>
+            <if test="breed != null  and breed != ''">and breed like concat('%', #{breed}, '%')</if>
+            <if test="lostLocation != null  and lostLocation != ''">and lost_location = #{lostLocation}</if>
+            <if test="params.beginLostTime != null and params.beginLostTime != '' and params.endLostTime != null and params.endLostTime != ''">
+                and lost_time between #{params.beginLostTime} and #{params.endLostTime}
+            </if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+        order by lost_id desc
+    </select>
+
+    <select id="selectLostPetByLostId" parameterType="Long" resultMap="LostPetResult">
+        <include refid="selectLostPetVo"/>
+        where lost_id = #{lostId}
+    </select>
+
+    <insert id="insertLostPet" parameterType="LostPet" useGeneratedKeys="true" keyProperty="lostId">
+        insert into tb_lost_pet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="ownerName != null">owner_name,</if>
+            <if test="ownerPhone != null">owner_phone,</if>
+            <if test="petName != null">pet_name,</if>
+            <if test="species != null">species,</if>
+            <if test="breed != null">breed,</if>
+            <if test="features != null">features,</if>
+            <if test="message != null">message,</if>
+            <if test="lostLocation != null">lost_location,</if>
+            <if test="lostTime != null">lost_time,</if>
+            <if test="reward != null">reward,</if>
+            <if test="images != null">images,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="ownerName != null">#{ownerName},</if>
+            <if test="ownerPhone != null">#{ownerPhone},</if>
+            <if test="petName != null">#{petName},</if>
+            <if test="species != null">#{species},</if>
+            <if test="breed != null">#{breed},</if>
+            <if test="features != null">#{features},</if>
+            <if test="message != null">#{message},</if>
+            <if test="lostLocation != null">#{lostLocation},</if>
+            <if test="lostTime != null">#{lostTime},</if>
+            <if test="reward != null">#{reward},</if>
+            <if test="images != null">#{images},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateLostPet" parameterType="LostPet">
+        update tb_lost_pet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="ownerName != null">owner_name = #{ownerName},</if>
+            <if test="ownerPhone != null">owner_phone = #{ownerPhone},</if>
+            <if test="petName != null">pet_name = #{petName},</if>
+            <if test="species != null">species = #{species},</if>
+            <if test="breed != null">breed = #{breed},</if>
+            <if test="features != null">features = #{features},</if>
+            <if test="message != null">message = #{message},</if>
+            <if test="lostLocation != null">lost_location = #{lostLocation},</if>
+            <if test="lostTime != null">lost_time = #{lostTime},</if>
+            <if test="reward != null">reward = #{reward},</if>
+            <if test="images != null">images = #{images},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where lost_id = #{lostId}
+    </update>
+    <update id="updateDeleteLostPetByLostIds">
+        update tb_lost_pet set is_deleted = 1
+        where lost_id in
+        <foreach item="lostId" collection="array" open="(" separator="," close=")">
+            #{lostId}
+        </foreach>
+    </update>
+
+    <delete id="deleteLostPetByLostId" parameterType="Long">
+        delete
+        from tb_lost_pet
+        where lost_id = #{lostId}
+    </delete>
+
+    <delete id="deleteLostPetByLostIds" parameterType="String">
+        delete from tb_lost_pet where lost_id in
+        <foreach item="lostId" collection="array" open="(" separator="," close=")">
+            #{lostId}
+        </foreach>
+    </delete>
+</mapper>

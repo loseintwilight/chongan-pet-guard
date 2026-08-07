@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pet.mapper.ShopMapper">
+
+    <resultMap type="Shop" id="ShopResult">
+        <result property="shopId" column="shop_id"/>
+        <result property="shopName" column="shop_name"/>
+        <result property="mainImage" column="main_image"/>
+        <result property="userId" column="user_id"/>
+        <result property="legalPhone" column="legal_phone"/>
+        <result property="legalName" column="legal_name"/>
+        <result property="legalNumber" column="legal_number"/>
+        <result property="licenseNumber" column="license_number"/>
+        <result property="licenseImage" column="license_image"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="district" column="district"/>
+        <result property="address" column="address"/>
+        <result property="ownerPhone" column="owner_phone"/>
+        <result property="bussinessHours" column="bussiness_hours"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="creareBy" column="creare_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="reviewId" column="review_id"/>
+        <result property="reviewTime" column="review_time"/>
+        <result property="reviewRemark" column="review_remark"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <sql id="selectShopVo">
+        select shop_id,
+               shop_name,
+               main_image,
+               user_id,
+               legal_phone,
+               legal_name,
+               legal_number,
+               license_number,
+               license_image,
+               province,
+               city,
+               district,
+               address,
+               owner_phone,
+               bussiness_hours,
+               description,
+               status,
+               create_time,
+               creare_by,
+               update_time,
+               update_by,
+               review_id,
+               review_time,
+               review_remark,
+               is_deleted
+        from tb_shop
+    </sql>
+
+    <select id="selectShopList" parameterType="Shop" resultMap="ShopResult">
+        <include refid="selectShopVo"/>
+        <where>
+            is_deleted = 0
+            <if test="shopName != null  and shopName != ''">and shop_name like concat('%', #{shopName}, '%')</if>
+            <if test="legalPhone != null  and legalPhone != ''">and legal_phone = #{legalPhone}</if>
+            <if test="legalName != null  and legalName != ''">and legal_name like concat('%', #{legalName}, '%')</if>
+            <if test="province != null  and province != ''">and province like concat('%', #{province}, '%')</if>
+            <if test="city != null  and city != ''">and city like concat('%', #{city}, '%')</if>
+            <if test="district != null  and district != ''">and district like concat('%', #{district}, '%')</if>
+            <if test="status != null ">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectShopByShopId" parameterType="Long" resultMap="ShopResult">
+        <include refid="selectShopVo"/>
+        where shop_id = #{shopId}
+    </select>
+
+    <select id="selectShopByUserId" parameterType="Long" resultMap="ShopResult">
+        <include refid="selectShopVo"/>
+        where user_id = #{userId}
+    </select>
+
+    <insert id="insertShop" parameterType="Shop" useGeneratedKeys="true" keyProperty="shopId">
+        insert into tb_shop
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopName != null and shopName != ''">shop_name,</if>
+            <if test="mainImage != null and mainImage != ''">main_image,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="legalPhone != null and legalPhone != ''">legal_phone,</if>
+            <if test="legalName != null and legalName != ''">legal_name,</if>
+            <if test="legalNumber != null and legalNumber != ''">legal_number,</if>
+            <if test="licenseNumber != null and licenseNumber != ''">license_number,</if>
+            <if test="licenseImage != null and licenseImage != ''">license_image,</if>
+            <if test="province != null and province != ''">province,</if>
+            <if test="city != null and city != ''">city,</if>
+            <if test="district != null and district != ''">district,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="ownerPhone != null and ownerPhone != ''">owner_phone,</if>
+            <if test="bussinessHours != null and bussinessHours != ''">bussiness_hours,</if>
+            <if test="description != null and description != ''">description,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="creareBy != null">creare_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="reviewId != null">review_id,</if>
+            <if test="reviewTime != null">review_time,</if>
+            <if test="reviewRemark != null and reviewRemark != ''">review_remark,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopName != null and shopName != ''">#{shopName},</if>
+            <if test="mainImage != null and mainImage != ''">#{mainImage},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="legalPhone != null and legalPhone != ''">#{legalPhone},</if>
+            <if test="legalName != null and legalName != ''">#{legalName},</if>
+            <if test="legalNumber != null and legalNumber != ''">#{legalNumber},</if>
+            <if test="licenseNumber != null and licenseNumber != ''">#{licenseNumber},</if>
+            <if test="licenseImage != null and licenseImage != ''">#{licenseImage},</if>
+            <if test="province != null and province != ''">#{province},</if>
+            <if test="city != null and city != ''">#{city},</if>
+            <if test="district != null and district != ''">#{district},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="ownerPhone != null and ownerPhone != ''">#{ownerPhone},</if>
+            <if test="bussinessHours != null and bussinessHours != ''">#{bussinessHours},</if>
+            <if test="description != null and description != ''">#{description},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="creareBy != null">#{creareBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="reviewId != null">#{reviewId},</if>
+            <if test="reviewTime != null">#{reviewTime},</if>
+            <if test="reviewRemark != null and reviewRemark != ''">#{reviewRemark},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+        </trim>
+    </insert>
+
+    <update id="updateShop" parameterType="Shop">
+        update tb_shop
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shopName != null and shopName != ''">shop_name = #{shopName},</if>
+            <if test="mainImage != null and mainImage != ''">main_image = #{mainImage},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="legalPhone != null and legalPhone != ''">legal_phone = #{legalPhone},</if>
+            <if test="legalName != null and legalName != ''">legal_name = #{legalName},</if>
+            <if test="legalNumber != null and legalNumber != ''">legal_number = #{legalNumber},</if>
+            <if test="licenseNumber != null and licenseNumber != ''">license_number = #{licenseNumber},</if>
+            <if test="licenseImage != null and licenseImage != ''">license_image = #{licenseImage},</if>
+            <if test="province != null and province != ''">province = #{province},</if>
+            <if test="city != null and city != ''">city = #{city},</if>
+            <if test="district != null and district != ''">district = #{district},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="ownerPhone != null and ownerPhone != ''">owner_phone = #{ownerPhone},</if>
+            <if test="bussinessHours != null and bussinessHours != ''">bussiness_hours = #{bussinessHours},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="creareBy != null">creare_by = #{creareBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="reviewId != null">review_id = #{reviewId},</if>
+            <if test="reviewTime != null">review_time = #{reviewTime},</if>
+            <if test="reviewRemark != null and reviewRemark != ''">review_remark = #{reviewRemark},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where shop_id = #{shopId}
+    </update>
+    <update id="updateDeleteShopByShopIds">
+        update tb_shop
+        set is_deleted = 1 where shop_id in
+        <foreach item="shopId" collection="array" open="(" separator="," close=")">
+            #{shopId}
+        </foreach>
+    </update>
+
+    <delete id="deleteShopByShopId" parameterType="Long">
+        delete
+        from tb_shop
+        where shop_id = #{shopId}
+    </delete>
+
+    <delete id="deleteShopByShopIds" parameterType="String">
+        delete from tb_shop where shop_id in
+        <foreach item="shopId" collection="array" open="(" separator="," close=")">
+            #{shopId}
+        </foreach>
+    </delete>
+</mapper>
